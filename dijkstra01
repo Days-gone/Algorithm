@@ -1,0 +1,90 @@
+#include<iostream>
+#include<cstring>
+#include<queue>
+#include<algorithm>
+using namespace std;
+
+const int N= 10000;
+typedef pair<int ,int > PII;
+
+int h[N],w[N],e[N],ne[N],idx;
+int dist[N];
+bool st[N];
+int cnt[N],ans[N],sum[N];           
+int n,m,s,t;
+int pre[N];
+
+void add(int a,int b,int c)
+{
+    e[idx]=b,w[idx]=c,ne[idx]=h[a],h[a]=idx++;
+}
+
+void dij()
+{
+    memset(dist,0x3f,sizeof(dist));
+    dist[s]=0,cnt[s]=1,ans[s]=sum[s];
+    priority_queue<PII,vector<PII> ,greater<PII> > heap;
+    heap.push({0,s});
+
+    while(!heap.empty())
+    {
+        auto t=heap.top();
+        heap.pop();
+        int ver=t.second,dis=t.first;
+
+        if(st[ver])continue;
+        st[ver]=true;
+
+        for(int i=h[ver];~i;i=ne[i])
+        {
+            int j=e[i];
+            if(dist[j]>dis+w[i])            
+            {
+                pre[j] = ver;
+                dist[j]=dist[ver]+w[i];
+                heap.push({dist[j],j});
+                cnt[j]=cnt[ver];           
+                ans[j]=ans[ver]+sum[j];
+            }
+            else if(dist[j]==dis+w[i])
+            {
+                cnt[j]+=cnt[ver];                
+                if (ans[j] < ans[ver] + sum[j])
+                {
+                    ans[j] = ans[ver] + sum[j]; 
+                    pre[j] = ver;                  
+                }
+            }
+        }
+    }
+}
+void dfs(int s,int v)
+{
+    while(pre)
+}
+
+
+int main()
+{
+    memset(h,-1,sizeof(h));
+
+    cin>>n>>m>>s>>t;
+    for(int i=0;i<n;i++)cin>>sum[i];
+
+    while(m--)
+    {
+        int a,b,c;
+        cin>>a>>b>>c;
+        add(a,b,c);
+        add(b,a,c);
+    }
+
+    dij();
+
+    cout<<cnt[t]<<" "<<ans[t]<<endl;
+    dfs(s,t);
+    puts("");
+    return 0;
+}
+
+
