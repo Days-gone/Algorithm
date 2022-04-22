@@ -1,0 +1,64 @@
+#include<iostream>
+#include<map>
+#include<queue>
+
+using namespace std;
+
+const int N = 100010;
+
+int n;
+int preorder[N],inorder[N];
+int l[N],r[N];
+map<int,int>pos;
+bool flag;
+
+int build(int pl,int pr,int il,int ir)
+{
+    int root = preorder[pl];
+    int k = pos[root];
+    if (k > il)l[root] = build(pl+1,pl+k-il,il,k-1);
+    if (k < ir)r[root] = build(pl+k-il+1,pr,k+1,ir);
+    return root;
+}
+
+void change(int x)
+{
+    if (l[x] == 0 || r[x] == 0)return;
+    swap(l[x],r[x]);
+    change(l[x]);
+    change(r[x]);
+}
+void bfs(int x)
+{
+    queue<int>q;
+    q.push(x);
+
+    while(q.size())
+    {
+        auto t = q.front();
+        q.pop();
+        if (!flag)printf("%d ",t),flag = true;
+        else printf(" %d",t);
+
+        if (l[t])q.push(l[t]);
+        if (r[t])q.push(r[t]);
+    }
+}
+
+
+int main()
+{
+    cin>>n;
+    for(int i = 0;i < n;i ++)
+    {
+        cin>>inorder[i];
+        pos[inorder[i]] = i;
+    }
+    for(int i = 0;i < n;i ++)cin>>preorder[i];
+
+    int root = build(0,n-1,0,n-1);
+    change(root);
+    bfs(root);
+    return 0;
+}
+//只有20分但不知道为什么
